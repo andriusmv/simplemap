@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bahamas Map Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.30/esri/themes/light/main.css"
+    />
+    <script type="module" src="https://js.arcgis.com/calcite-components/2.8.0/calcite.esm.js"></script>
+    <script nomodule src="https://js.arcgis.com/calcite-components/2.8.0/calcite.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/calcite-components/2.8.0/calcite.css"
+    />
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        font-family: "Avenir Next", "Avenir", "Helvetica Neue", sans-serif;
+        background-color: var(--calcite-color-foreground-1);
+      }
+
+      calcite-shell {
+        --calcite-shell-panel-max-width: 420px;
+        height: 100%;
+      }
+
+      #viewDiv {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+      }
+
+      .panel-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .chart-placeholder,
+      .list-placeholder {
+        background: var(--calcite-color-foreground-2);
+        border-radius: var(--calcite-border-radius);
+        padding: 1rem;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--calcite-color-text-2);
+        text-align: center;
+      }
+
+      .chart-placeholder span,
+      .list-placeholder span {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
+
+      calcite-panel[slot="contextual-action"] {
+        width: 320px;
+      }
+    </style>
+  </head>
+  <body>
+    <calcite-shell content-behind>
+      <calcite-shell-panel slot="panel-start" display-mode="float">
+        <calcite-panel heading="Bahamas Overview">
+          <div class="panel-content">
+            <div class="stat-grid">
+              <calcite-card heading="Population" description="Approx. 400k">
+                <span slot="subtitle">Est. 2023</span>
+              </calcite-card>
+              <calcite-card heading="Islands" description="700+">
+                <span slot="subtitle">National total</span>
+              </calcite-card>
+              <calcite-card heading="GDP" description="$13B">
+                <span slot="subtitle">World Bank 2022</span>
+              </calcite-card>
+            </div>
+            <div class="chart-placeholder">
+              <span>Economic Indicators Placeholder</span>
+            </div>
+            <div class="list-placeholder">
+              <span>Recent Events Placeholder</span>
+            </div>
+          </div>
+        </calcite-panel>
+      </calcite-shell-panel>
+
+      <calcite-navigation slot="header">
+        <calcite-navigation-logo
+          heading="Bahamas Dashboard"
+          description="ArcGIS Calcite demo"
+        ></calcite-navigation-logo>
+        <calcite-navigation-user label="Guest User"></calcite-navigation-user>
+      </calcite-navigation>
+
+      <div id="viewDiv"></div>
+
+      <calcite-shell-panel slot="panel-end" display-mode="float">
+        <calcite-panel heading="Layers">
+          <calcite-block open heading="Operational Layers">
+            <calcite-list>
+              <calcite-list-item label="Nassau Points of Interest" value="poi"></calcite-list-item>
+              <calcite-list-item label="Maritime Routes" value="routes"></calcite-list-item>
+              <calcite-list-item label="Weather Stations" value="weather"></calcite-list-item>
+            </calcite-list>
+          </calcite-block>
+        </calcite-panel>
+      </calcite-shell-panel>
+    </calcite-shell>
+
+    <script type="module">
+      import Map from "https://js.arcgis.com/4.30/@arcgis/core/Map.js";
+      import MapView from "https://js.arcgis.com/4.30/@arcgis/core/views/MapView.js";
+      import TileLayer from "https://js.arcgis.com/4.30/@arcgis/core/layers/TileLayer.js";
+
+      const map = new Map({
+        basemap: "osm"
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map,
+        center: [-77.3963, 25.0343],
+        zoom: 7,
+        ui: {
+          components: ["zoom", "compass", "attribution"]
+        }
+      });
+
+      const labelsLayer = new TileLayer({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer",
+        opacity: 0.6
+      });
+
+      map.add(labelsLayer);
+
+      view.when(() => {
+        view.popup.dockEnabled = true;
+        view.popup.dockOptions = {
+          position: "top-right",
+          breakpoint: false
+        };
+      });
+    </script>
+  </body>
+</html>
